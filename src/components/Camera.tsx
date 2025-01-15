@@ -15,8 +15,13 @@ const Camera = forwardRef<HTMLVideoElement, CameraProps>((props, ref) => {
 
   useEffect(() => {
     const setupVideoInput = async () => {
-      // getUserMedia
-      videoRef.current?.srcObject = stream;
+      try {
+        if (videoRef.current) {
+          // getUserMedia
+          // srcObject
+          // play
+        }
+      } catch (error) {}
     };
     setupVideoInput();
   }, []);
