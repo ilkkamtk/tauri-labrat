@@ -29,7 +29,9 @@ const Camera = forwardRef<HTMLVideoElement, CameraProps>((props, ref) => {
             videoRef.current?.play();
           };
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error('Error setting video input', (error as Error).message);
+      }
     };
     setupVideoInput();
   }, []);
