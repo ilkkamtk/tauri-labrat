@@ -17,9 +17,17 @@ const Camera = forwardRef<HTMLVideoElement, CameraProps>((props, ref) => {
     const setupVideoInput = async () => {
       try {
         if (videoRef.current) {
-          // getUserMedia
-          // srcObject
-          // play
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              width,
+              height,
+            },
+            audio: false,
+          });
+          videoRef.current.srcObject = stream;
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current?.play();
+          };
         }
       } catch (error) {}
     };
