@@ -12,7 +12,11 @@ const DetectFace: React.FC = () => {
 
     // Detect face from video frames
     const detectFace = async () => {
-      getDescriptors(videoRef);
+      try {
+        await getDescriptors(videoRef);
+      } catch (error) {
+        console.error('Error detecting face:', error);
+      }
 
       // Schedule the next detection
       timer = setTimeout(detectFace, 100);
@@ -46,7 +50,7 @@ const DetectFace: React.FC = () => {
     };
   }, []);
 
-  console.log('Detection object', detection);
+  // console.log('Detection object', detection);
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px' }}>

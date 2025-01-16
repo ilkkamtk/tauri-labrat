@@ -1,5 +1,6 @@
 import { RefObject, useEffect, useState } from 'react';
 import * as faceapi from 'face-api.js';
+import randomstring from '@/lib/randomstring';
 
 const useFaceDetection = () => {
   const [detection, setDetection] = useState<faceapi.FaceDetection | null>(
@@ -36,6 +37,12 @@ const useFaceDetection = () => {
       console.error('No face detected');
       return;
     }
+
+    const faceName = randomstring(6);
+    const labeledDescriptor = new faceapi.LabeledFaceDescriptors(faceName, [
+      result.descriptor,
+    ]);
+    console.log('result', labeledDescriptor);
 
     setDetection(result.detection);
   };
