@@ -5,6 +5,9 @@ import { NavLink } from 'react-router';
 const Home = () => {
   const { getAllFaces, getAllVotes, deleteAllFromDB } = useDbContext();
 
+  console.log('faces', getAllFaces());
+  console.log('votes', getAllVotes());
+
   const handleClearDatabase = () => {
     try {
       deleteAllFromDB();

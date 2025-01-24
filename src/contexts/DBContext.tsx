@@ -1,10 +1,9 @@
 import { createContext, useEffect, useState } from 'react';
 import { useDB } from '../hooks/DBHooks';
-import { Vote } from '@/types/localTypes';
-import Loki from 'lokijs';
+import { DBState, Vote } from '@/types/localTypes';
 
 type DbContextType = {
-  db: Loki | null;
+  state: DBState;
   addFaces: (doc: Float32Array) => Float32Array | undefined;
   getAllFaces: () => (Float32Array & LokiObj)[];
   deleteAllFromDB: () => void;
@@ -17,21 +16,25 @@ const DbContext = createContext<DbContextType | null>(null);
 
 const DbProvider = ({ children }: { children: React.ReactNode }) => {
   const [faces, setFaces] = useState<(Float32Array & LokiObj)[]>([]);
-  const { db, addFaces, getAllFaces, deleteAllFromDB, addVotes, getAllVotes } =
-    useDB();
+  const {
+    state,
+    addFaces,
+    getAllFaces,
+    deleteAllFromDB,
+    addVotes,
+    getAllVotes,
+  } = useDB();
 
   useEffect(() => {
-    console.log(getAllFaces());
+    console.log('DBCOntexct', getAllFaces());
 
     setFaces(getAllFaces());
   }, []);
 
-  console.log('faces context', faces);
-
   return (
     <DbContext.Provider
       value={{
-        db,
+        state,
         addFaces,
         getAllFaces,
         deleteAllFromDB,

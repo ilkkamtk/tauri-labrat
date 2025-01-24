@@ -9,7 +9,7 @@ const DetectFace: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null); // Reference to the video element
   const { detection, getDescriptors, matchFace } = useFaceDetection();
   const navigate = useNavigate();
-  const { faces } = useDbContext();
+  const { state, faces } = useDbContext();
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -25,7 +25,7 @@ const DetectFace: React.FC = () => {
             faces,
           );
           console.log('mätsi', match);
-          if (match && match.distance > 0.3) {
+          if (faces.length === 0 || (match && match.distance > 0.3)) {
             navigate('/detected', {
               state: descriptorsResult.labeledDescriptor.toJSON(),
             });
@@ -51,6 +51,11 @@ const DetectFace: React.FC = () => {
               videoRef.current!.oncanplay = () => resolve();
             }
           });
+          // wait for database to be ready
+
+          if (state.status !== 'ready') {
+            throw new Error('Database not ready');
+          }
 
           if (faces) {
             detectFace(faces); // Start detecting faces
@@ -70,8 +75,6 @@ const DetectFace: React.FC = () => {
       }
     };
   }, []);
-
-  // console.log('Detection object', detection);
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px' }}>

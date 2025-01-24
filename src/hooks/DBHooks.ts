@@ -1,80 +1,60 @@
 import { useEffect, useState } from 'react';
 import Loki from 'lokijs';
-import { Vote } from '@/types/localTypes';
+import { DBState, Vote } from '@/types/localTypes';
 
 const useDB = () => {
-  const [db, setDB] = useState<Loki | null>(null);
-  const [faceCollection, setFaceCollection] =
-    useState<Loki.Collection<Float32Array> | null>(null);
-  const [voteCollection, setVoteCollection] =
-    useState<Loki.Collection<Vote> | null>(null);
-
+  const [state, setState] = useState<DBState>({ status: 'initializing' });
   useEffect(() => {
     try {
-      const dbInstance = new Loki('1.json');
-
-      // load database if it exists
-      dbInstance.loadDatabase({}, () => {
-        // get or create collection of documents
+      const db = new Loki('1.json');
+      db.loadDatabase({}, () => {
         const faces =
-          dbInstance.getCollection<Float32Array>('faces') ||
-          dbInstance.addCollection('faces');
+          db.getCollection<Float32Array>('faces') || db.addCollection('faces');
         const votes =
-          dbInstance.getCollection<Vote>('votes') ||
-          dbInstance.addCollection('votes');
-        setDB(dbInstance);
-        setFaceCollection(faces);
-        setVoteCollection(votes);
+          db.getCollection<Vote>('votes') || db.addCollection('votes');
+        setState({ status: 'ready', db, faces, votes });
       });
     } catch (error) {
-      console.error('useDB error', error);
+      setState({ status: 'error', error: error as Error });
     }
   }, []);
 
-  const getAllFaces = () => {
-    console.log('hä', db, faceCollection);
-    if (!faceCollection) {
-      return [];
-    }
-    return faceCollection.find();
-  };
+  if (state.status !== 'ready') {
+    return {
+      state,
+      addFaces: () => {
+        throw new Error('Database not ready');
+      },
+      addVotes: () => {
+        throw new Error('Database not ready');
+      },
+      getAllFaces: () => [],
+      getAllVotes: () => [],
+      deleteAllFromDB: () => {
+        throw new Error('Database not ready');
+      },
+    };
+  }
 
-  const getAllVotes = () => {
-    if (!voteCollection) {
-      return [];
-    }
-    return voteCollection.find();
+  return {
+    state,
+    getAllFaces: () => state.faces.find(),
+    getAllVotes: () => state.votes.find(),
+    addFaces: (face: Float32Array) => {
+      const response = state.faces.insert(face);
+      state.db.saveDatabase();
+      return response;
+    },
+    addVotes: (vote: Vote) => {
+      const response = state.votes.insert(vote);
+      state.db.saveDatabase();
+      return response;
+    },
+    deleteAllFromDB: () => {
+      state.faces.clear();
+      state.votes.clear();
+      state.db.saveDatabase();
+    },
   };
-
-  const addFaces = (face: Float32Array) => {
-    if (!db || !faceCollection) {
-      throw new Error('No database or collection');
-    }
-    const response = faceCollection.insert(face);
-    db.saveDatabase();
-    return response;
-  };
-
-  const addVotes = (vote: Vote) => {
-    if (!db || !voteCollection) {
-      throw new Error('No database or collection');
-    }
-    const response = voteCollection.insert(vote);
-    db.saveDatabase();
-    return response;
-  };
-
-  const deleteAllFromDB = () => {
-    if (!db || !voteCollection || !faceCollection) {
-      throw new Error('No database or collection');
-    }
-    faceCollection.clear();
-    voteCollection.clear();
-    db.saveDatabase();
-    setFaceCollection(null);
-    setVoteCollection(null);
-  };
-  return { db, addFaces, addVotes, getAllFaces, getAllVotes, deleteAllFromDB };
 };
-
 export { useDB };
