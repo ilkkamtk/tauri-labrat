@@ -32,6 +32,7 @@ const useDB = () => {
   }, []);
 
   const getAllFaces = () => {
+    console.log('hä', db, faceCollection);
     if (!faceCollection) {
       return [];
     }
@@ -73,7 +74,7 @@ const useDB = () => {
     setFaceCollection(null);
     setVoteCollection(null);
   };
-  return { addFaces, addVotes, getAllFaces, getAllVotes, deleteAllFromDB };
+  return { db, addFaces, addVotes, getAllFaces, getAllVotes, deleteAllFromDB };
 };
 
 export { useDB };
