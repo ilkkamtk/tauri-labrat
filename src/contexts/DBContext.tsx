@@ -18,18 +18,35 @@ const DbProvider = ({ children }: { children: React.ReactNode }) => {
   const [faces, setFaces] = useState<(Float32Array & LokiObj)[]>([]);
   const {
     state,
-    addFaces,
+    addFaces: dbAddFaces,
     getAllFaces,
-    deleteAllFromDB,
+    deleteAllFromDB: dbDeleteAll,
     addVotes,
     getAllVotes,
   } = useDB();
 
-  useEffect(() => {
-    console.log('DBCOntexct', getAllFaces());
+  const updateFaces = () => {
+    if (state.status === 'ready') {
+      const allFaces = getAllFaces();
+      console.log('Updating faces:', allFaces);
+      setFaces(allFaces);
+    }
+  };
 
-    setFaces(getAllFaces());
-  }, []);
+  useEffect(() => {
+    updateFaces();
+  }, [state.status]);
+
+  const addFaces = (doc: Float32Array) => {
+    const result = dbAddFaces(doc);
+    updateFaces();
+    return result;
+  };
+
+  const deleteAllFromDB = () => {
+    dbDeleteAll();
+    setFaces([]);
+  };
 
   return (
     <DbContext.Provider
