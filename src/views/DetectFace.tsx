@@ -49,7 +49,7 @@ const DetectFace: React.FC = () => {
         console.error('Error detecting face:', error);
       }
 
-      timer = setTimeout(detectFace, 100, faces);
+      timer = setTimeout(detectFace, 200, faces);
     };
 
     const startDetection = async () => {
@@ -78,7 +78,7 @@ const DetectFace: React.FC = () => {
         clearTimeout(timer);
       }
     };
-  }, [state.status, faces, navigate, getDescriptors, matchFace]);
+  }, []);
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20px' }}>

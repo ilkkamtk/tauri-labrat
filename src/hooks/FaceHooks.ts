@@ -2,6 +2,16 @@ import { RefObject, useEffect, useState } from 'react';
 import * as faceapi from 'face-api.js';
 import randomstring from '@/lib/randomstring';
 
+type DetectionResult = {
+  result: faceapi.WithFaceDescriptor<
+    faceapi.WithFaceLandmarks<
+      { detection: faceapi.FaceDetection },
+      faceapi.FaceLandmarks68
+    >
+  >;
+  labeledDescriptor: faceapi.LabeledFaceDescriptors;
+};
+
 const useFaceDetection = () => {
   const [detection, setDetection] = useState<faceapi.FaceDetection | null>(
     null,
@@ -23,7 +33,9 @@ const useFaceDetection = () => {
     loadModels();
   }, []);
 
-  const getDescriptors = async (videoRef: RefObject<HTMLVideoElement>) => {
+  const getDescriptors = async (
+    videoRef: RefObject<HTMLVideoElement>,
+  ): Promise<DetectionResult | undefined> => {
     if (!videoRef.current) {
       return;
     }
