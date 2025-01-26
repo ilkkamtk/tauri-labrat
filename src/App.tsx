@@ -8,7 +8,7 @@ import { useStore } from './stores/dbStore';
 import { useEffect } from 'react';
 
 const App = () => {
-  const init = useStore((state) => state.init);
+  const { init } = useStore();
 
   useEffect(() => {
     init();
