@@ -3,13 +3,13 @@ import React, { useEffect, useRef } from 'react';
 import Camera from '@/components/Camera';
 import { useFaceDetection } from '@/hooks/FaceHooks';
 import { useNavigate } from 'react-router';
-import { useDbContext } from '@/hooks/ContextHooks';
+import { useStore } from '@/stores/dbStore';
 
 const DetectFace: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null); // Reference to the video element
   const { detection, getDescriptors, matchFace } = useFaceDetection();
   const navigate = useNavigate();
-  const { state, faces } = useDbContext();
+  const { faces, isReady } = useStore();
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -37,7 +37,7 @@ const DetectFace: React.FC = () => {
           console.log('match result:', match);
 
           // If match.distance > 0.3, it means the face is not recognized (new face)
-          if (match && match.distance > 0.3) {
+          if (match && match.distance > 0.6) {
             console.log('New face detected, navigating to save');
             navigate('/detected', {
               state: descriptorsResult.labeledDescriptor.toJSON(),
@@ -54,7 +54,7 @@ const DetectFace: React.FC = () => {
 
     const startDetection = async () => {
       try {
-        if (videoRef.current && state.status === 'ready' && faces.length >= 0) {
+        if (videoRef.current && isReady && faces.length >= 0) {
           await new Promise<void>((resolve) => {
             if (videoRef.current!.readyState >= 2) {
               resolve();

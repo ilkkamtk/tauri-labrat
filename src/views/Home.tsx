@@ -1,12 +1,11 @@
 import { Button } from '@/components/ui/button';
-import { useDbContext } from '@/hooks/ContextHooks';
+import { useStore } from '@/stores/dbStore';
 import { NavLink } from 'react-router';
 
 const Home = () => {
-  const { getAllFaces, getAllVotes, deleteAllFromDB } = useDbContext();
-
-  console.log('faces', getAllFaces());
-  console.log('votes', getAllVotes());
+  const { faces, votes, deleteAllFromDB } = useStore();
+  console.log('faces', faces);
+  console.log('votes', votes);
 
   const handleClearDatabase = () => {
     try {

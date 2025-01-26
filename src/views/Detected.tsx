@@ -1,10 +1,10 @@
-import { useDbContext } from '@/hooks/ContextHooks';
+import { useStore } from '@/stores/dbStore';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 
 const Detected = () => {
   const { state } = useLocation();
-  const { addFaces } = useDbContext();
+  const { addFaces } = useStore();
   useEffect(() => {
     // store descriptors to lokijs database
     try {
