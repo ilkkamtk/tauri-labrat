@@ -3,7 +3,7 @@ import { useDB } from '../hooks/DBHooks';
 import { DBState, Vote } from '@/types/localTypes';
 
 type DbContextType = {
-  state: DBState;
+  dbState: DBState;
   addFaces: (doc: Float32Array) => Float32Array | undefined;
   getAllFaces: () => (Float32Array & LokiObj)[];
   deleteAllFromDB: () => void;
@@ -17,7 +17,7 @@ const DbContext = createContext<DbContextType | null>(null);
 const DbProvider = ({ children }: { children: React.ReactNode }) => {
   const [faces, setFaces] = useState<(Float32Array & LokiObj)[]>([]);
   const {
-    state,
+    dbState,
     addFaces: dbAddFaces,
     getAllFaces,
     deleteAllFromDB: dbDeleteAll,
@@ -26,7 +26,7 @@ const DbProvider = ({ children }: { children: React.ReactNode }) => {
   } = useDB();
 
   const updateFaces = () => {
-    if (state.status === 'ready') {
+    if (dbState.status === 'ready') {
       const allFaces = getAllFaces();
       console.log('Updating faces:', allFaces);
       setFaces(allFaces);
@@ -35,7 +35,7 @@ const DbProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     updateFaces();
-  }, [state.status]);
+  }, [dbState.status]);
 
   const addFaces = (doc: Float32Array) => {
     const result = dbAddFaces(doc);
@@ -51,7 +51,7 @@ const DbProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <DbContext.Provider
       value={{
-        state,
+        dbState,
         addFaces,
         getAllFaces,
         deleteAllFromDB,
