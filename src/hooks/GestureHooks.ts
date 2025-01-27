@@ -30,7 +30,9 @@ const useGestureRecognition = (videoRef: RefObject<HTMLVideoElement>) => {
           videoRef.current,
           nowInMs,
         );
-        console.log(results);
+        if (results.gestures.length > 0) {
+          console.log(results.gestures[0][0].categoryName);
+        }
       }
       timer = setTimeout(processVideoFrames, 100);
     };
