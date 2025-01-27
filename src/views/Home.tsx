@@ -1,10 +1,9 @@
 import { Button } from '@/components/ui/button';
-import { useDB } from '@/hooks/DBHooks';
+import { useStore } from '@/stores/DBStore';
 import { NavLink } from 'react-router';
 
 const Home = () => {
-  const { getAllFaces, getAllVotes, deleteAllFromDB } = useDB();
-  console.log('faces', getAllFaces(), 'votes', getAllVotes());
+  const { faces, votes, deleteAllFromDB } = useStore();
 
   const handleClearDatabase = () => {
     try {
@@ -18,8 +17,8 @@ const Home = () => {
     <>
       <h1 className="text-center p-4 text-lg">Home</h1>
       <section className="text-center">
-        <p>Number of faces in database: X</p>
-        <p>Number of votes in database: Y</p>
+        <p>Number of faces in database: {faces.length}</p>
+        <p>Number of votes in database: {votes.length}</p>
       </section>
       <section className="p-4">
         <p>Results:</p>
