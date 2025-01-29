@@ -83,7 +83,7 @@ const DetectFace: React.FC = () => {
   // console.log('Detection object', detection);
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+    <div className=" text-center">
       <h1>Face Detection</h1>
       <div style={{ position: 'relative' }}>
         <Camera ref={videoRef} width={800} aspect={16 / 9} />
