@@ -34,7 +34,7 @@ const DetectFace: React.FC = () => {
             faces,
           );
           console.log('mätsi', match);
-          if (match && match.distance > 0.3) {
+          if (match && match.distance > 0.2) {
             navigate('/detected', {
               state: descriptorsResult.labeledDescriptor.toJSON(),
             });
