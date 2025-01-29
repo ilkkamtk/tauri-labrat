@@ -20,6 +20,7 @@ const Home = () => {
   const handleClearDatabase = () => {
     try {
       deleteAllFromDB();
+      setResult({ positives: 0, negatives: 0 });
     } catch (error) {
       console.error(error);
     }
