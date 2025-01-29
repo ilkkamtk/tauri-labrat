@@ -3,6 +3,7 @@ import { GestureRecognizer, FilesetResolver } from '@mediapipe/tasks-vision';
 
 const useGestureRecognition = (videoRef: RefObject<HTMLVideoElement>) => {
   const [gesture, setGesture] = useState('');
+  const [savedGesture, setSavedGesture] = useState('');
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -30,9 +31,23 @@ const useGestureRecognition = (videoRef: RefObject<HTMLVideoElement>) => {
           videoRef.current,
           nowInMs,
         );
-        if (results.gestures.length > 0) {
-          console.log(results.gestures[0][0].categoryName);
-        }
+
+        results.gestures.forEach((categories) => {
+          categories.forEach((category) => {
+            const currentGesture = category.categoryName;
+            if (currentGesture !== 'None') {
+              if (
+                currentGesture === 'Thumb_Up' ||
+                currentGesture === 'Thumb_Down'
+              ) {
+                setGesture(currentGesture);
+                setSavedGesture(currentGesture);
+              } else if (currentGesture !== gesture) {
+                setGesture(currentGesture);
+              }
+            }
+          });
+        });
       }
       timer = setTimeout(processVideoFrames, 100);
     };
@@ -56,7 +71,20 @@ const useGestureRecognition = (videoRef: RefObject<HTMLVideoElement>) => {
     };
 
     main();
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      if (gestureRecognizer) {
+        gestureRecognizer.close();
+        gestureRecognizer = null;
+      }
+    };
   }, []);
+
+  console.log(gesture, savedGesture);
+  return { gesture, savedGesture };
 };
 
 export { useGestureRecognition };
